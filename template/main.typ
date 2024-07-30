@@ -1,1 +1,3 @@
-dddd
+#import "../lib.typ": *
+
+#show: report()
