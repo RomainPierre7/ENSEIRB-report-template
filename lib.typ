@@ -1,69 +1,68 @@
-#let project(title: "", authors: (), date: none, body) = {
-  // Set the document's basic properties
-  set document(author: authors, title: title)
-  set page(
-    margin: (left: 0.5cm, right: 0.5cm, top: 0.5cm, bottom: 0.5cm),
-    numbering: "1",
-    number-align: center,
+#let create_logo_section(company_logo, school_logo, logo_width: 80%) = {
+  grid(
+    columns: (1fr, 1fr),
+    gutter: 10pt,
+    align(left + bottom, image(company_logo, width: logo_width)),
+    align(right + bottom, image(school_logo, width: logo_width))
   )
-  set text(font: "New Computer Modern", lang: "fr")
-  show math.equation: set text(weight: 400)
-  
-  // Set paragraph properties
-  set par(justify: true, first-line-indent: 1cm)
-  
-  // Title page
-  page(
-    margin: (x: 0cm, y: 0cm),
-    [
-      #block(
-        width: 100%,
-        height: 100%,
-        [
-          #align(center)[
-            #v(0.5cm)
-            #image("logo_ecole.png", width: 10cm)
-            #v(1.0cm)
-            #line(length: 100%, stroke: 0.2mm)
-            #v(0.4cm)
-            #text(size: 24pt, weight: "bold")[#title]
-            #v(0.4cm)
-            #line(length: 100%, stroke: 0.2mm)
-            #v(1.5cm)
-            #text(size: 16pt)[#authors.join(", ")]
-            #v(1.0cm)
-            #text(size: 14pt, weight: "bold")[#date]
-            #v(2cm)
-            #align(center)[
-              #text(size: 24pt)[
-                "Ebiose"
-              ]
-            ]
-            #v(4cm)
-            #align(center)[
-              Stage d'approfondissement
-              #v(0.5em)
-              Département Informatique
-              #v(0.5em)
-              Année 2023/2024
-            ]
-          ]
-        ]
-      )
-    ]
-  )
-  
-  // Main body
-  set page(numbering: "1", number-align: center)
-  counter(page).update(1)
-  
-  body
 }
 
-// Main document
-#show: project.with(
-  title: "Rapport de Stage",
-  authors: ("APARICIO Mathias", ),
-  date: "Mai 2023",
-)
+#let create_title_section(title) = {
+  align(center)[
+    #text(size: 30pt, weight: "bold")[#title]
+  ]
+}
 
+#let create_intern_section(name, start_date, end_date) = {
+  align(center)[
+    #text(size: 20pt, weight: "thin")[#name]
+    #v(0.3cm)
+    #text(size: 15pt)[#start_date - #end_date]
+  ]
+}
+
+#let create_tutor_section(supervisor_name, supervisor_email, academic_tutor_name, academic_tutor_email) = {
+  let font_tutor_section_size = 17pt
+  let font_tutor_text_size = 12pt
+  grid(
+    columns: (1fr, 1fr),
+    align(center)[
+      #text(size: font_tutor_section_size, weight: "bold")[Maitre de stage] \
+      #text(size: font_tutor_text_size)[#supervisor_name \
+      #link("mailto:" + supervisor_email)[#supervisor_email]]
+    ],
+    align(center)[
+      #text(size: font_tutor_section_size, weight: "bold")[Tuteur académique] \
+      #text(size: font_tutor_text_size)[#academic_tutor_name \
+      #link("mailto:" + academic_tutor_email)[#academic_tutor_email]]
+    ]
+  )
+}
+
+#let create_front_page(
+  company_logo,
+  school_logo,
+  background_logo,
+  title,
+  intern_name,
+  start_date,
+  end_date,
+  supervisor_name,
+  supervisor_email,
+  academic_tutor_name,
+  academic_tutor_email
+) = {
+  set page(background: move(dx: 3%, dy: 19%, image(background_logo)))
+  
+  create_logo_section(company_logo, school_logo)
+  v(4cm)
+  create_title_section(title)
+  v(2cm)
+  create_intern_section(intern_name, start_date, end_date)
+  v(6cm)
+  create_tutor_section(supervisor_name, supervisor_email, academic_tutor_name, academic_tutor_email)
+
+  if background_logo != none {
+    set page(background: move(dx: 3%, dy: 19%, image(background_logo)))
+  }
+}
